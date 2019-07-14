@@ -49,6 +49,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     //
-    compile project(':jokes')
-    compile project(':displayjokes')
+    implementation project(':jokes')
+    implementation project(':displayjokes')
 }
