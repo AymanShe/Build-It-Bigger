@@ -4,8 +4,8 @@ import java.util.Random;
 
 public class JokeTeller {
 
-    private String[] jokes;
-    private Random random;
+    private final String[] jokes;
+    private final Random random;
 
     public JokeTeller() {
         random = new Random();
