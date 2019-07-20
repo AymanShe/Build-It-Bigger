@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String result) {
                 Intent intent = new Intent(MainActivity.this, DisplayJokeActivity.class);
-                intent.putExtra("INTENT_JOKE", result);
+                String intentExtraJokeName = "INTENT_JOKE";
+                intent.putExtra(intentExtraJokeName, result);
                 MainActivity.this.startActivity(intent);
             }
 
