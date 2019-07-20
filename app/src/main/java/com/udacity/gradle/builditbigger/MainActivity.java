@@ -1,11 +1,14 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.aymanshehri.displayjokes.DisplayJokeActivity;
 import com.udacity.gradle.builditbigger.Services.EndpointsAsyncTask;
 
 
@@ -41,11 +44,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
-        EndpointsAsyncTask endpointsAsyncTask = new EndpointsAsyncTask();
-        endpointsAsyncTask.execute(getApplicationContext());
+        EndpointsAsyncTask endpointsAsyncTask = new EndpointsAsyncTask(new OnEventListener<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Intent intent = new Intent(MainActivity.this, DisplayJokeActivity.class);
+                intent.putExtra("INTENT_JOKE", result);
+                MainActivity.this.startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(String exceptionMessage) {
+                Toast.makeText(MainActivity.this, "Error: " + exceptionMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+        endpointsAsyncTask.execute();
     }
-
-
-
-
 }

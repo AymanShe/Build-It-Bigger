@@ -9,16 +9,22 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+import com.udacity.gradle.builditbigger.OnEventListener;
 import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
 
 import java.io.IOException;
 
-public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
+public class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
     private static MyApi myApiService = null;
-    private Context context;
+    private OnEventListener<String> callBack;
+    private String exceptionMessage;
+
+    public EndpointsAsyncTask(OnEventListener<String> callBack) {
+        this.callBack = callBack;
+    }
 
     @Override
-    protected String doInBackground(Context... params) {
+    protected String doInBackground(Void... voids) {
         if(myApiService == null) {  // Only do this once
             MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                     new AndroidJsonFactory(), null)
@@ -37,19 +43,22 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
             myApiService = builder.build();
         }
 
-        context = params[0];
-
         try {
             return myApiService.tellJoke().execute().getData();
         } catch (IOException e) {
-            return e.getMessage();
+            exceptionMessage = e.getMessage();
+            return null;
         }
     }
 
     @Override
     protected void onPostExecute(String result) {
-        Intent intent = new Intent(context, DisplayJokeActivity.class);
-        intent.putExtra("INTENT_JOKE", result);
-        context.startActivity(intent);
+        if(callBack != null){
+            if(exceptionMessage == null){
+                callBack.onSuccess(result);
+            }else{
+                callBack.onFailure(exceptionMessage);
+            }
+        }
     }
 }
